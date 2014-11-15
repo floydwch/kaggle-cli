@@ -1,3 +1,12 @@
+=======
+Installation
+=======
+
+::
+
+ $ pip install kaggle_cli
+
+
 ====
 Usage
 ====
