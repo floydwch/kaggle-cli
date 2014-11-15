@@ -17,7 +17,7 @@ Submit
 
 ::
 
-  $ kg submit `competition` `entry` -u `username` -p `password`
+  $ kg submit `competition` `entry` -u `username` -p `password` -m `message`
 
 ^^^^^^
 Example
@@ -25,4 +25,4 @@ Example
 
 ::
 
-  $ kg submit titanic-gettingStarted sampleSubmission.csv -u USERNAME -p PASSWORD
+  $ kg submit titanic-gettingStarted sampleSubmission.csv -u USERNAME -p PASSWORD -m "Enter a brief description of this submission here."
