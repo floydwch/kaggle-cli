@@ -15,4 +15,5 @@ Example
 ^^^^^^
 
 ::
+
   $ kg submit titanic-gettingStarted sampleSubmission.csv -u USERNAME -p PASSWORD
