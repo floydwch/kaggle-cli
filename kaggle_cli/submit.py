@@ -5,7 +5,7 @@ from time import sleep
 
 
 class Entry(Command):
-    'Submit an entry to specific competition.'
+    'Submit an entry to a specific competition.'
 
     def get_parser(self, prog_name):
         parser = super(Entry, self).get_parser(prog_name)
