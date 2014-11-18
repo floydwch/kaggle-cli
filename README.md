@@ -3,7 +3,7 @@ An unofficial Kaggle command line tool.
 
 ## Installation
 ```
-$ pip install kaggle_cli
+$ pip install kaggle-cli
 ```
 
 ## Usage
