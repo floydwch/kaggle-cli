@@ -10,10 +10,11 @@ class Entry(Command):
     def get_parser(self, prog_name):
         parser = super(Entry, self).get_parser(prog_name)
 
-        parser.add_argument('competition', help='competition name')
         parser.add_argument('entry', help='entry file')
 
         parser.add_argument('-m', '--message', help='message')
+        parser.add_argument('-c', '--competition', help='competition',
+                            required=True)
         parser.add_argument('-u', '--username', help='username',
                             required=True)
         parser.add_argument('-p', '--password', help='password',
