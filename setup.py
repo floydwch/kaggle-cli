@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
 
-PROJECT = 'kaggle_cli'
+PROJECT = 'kaggle-cli'
 VERSION = '0.1'
 
 from setuptools import setup, find_packages
 
 try:
-    long_description = open('README.rst', 'rt').read()
+    long_description = open('README.md', 'rt').read()
 except IOError:
     long_description = ''
 
@@ -21,8 +21,8 @@ setup(
     author='floydsoft',
     author_email='floydsoft@gmail.com',
 
-    url='https://github.com/floydsoft/kaggle_cli',
-    download_url='https://github.com/floydsoft/kaggle_cli/tarball/master',
+    url='https://github.com/floydsoft/kaggle-cli',
+    download_url='https://github.com/floydsoft/kaggle-cli/tarball/master',
 
     classifiers=['Development Status :: 3 - Alpha',
                  'License :: OSI Approved :: MIT License',
