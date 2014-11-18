@@ -19,7 +19,7 @@ $ kg submit `entry` -u `username` -p `password` -c `competition` -m `message`
 $ kg config -u `username` -p `password` -c `competition`
 ```
 
-#### Example
+## Example
 ```
 $ kg submit sampleSubmission.csv -c titanic-gettingStarted -u USERNAME -p PASSWORD -m "Enter a brief description of this submission here."
 ```
