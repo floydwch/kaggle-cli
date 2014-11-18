@@ -2,14 +2,12 @@
 
 
 PROJECT = 'kaggle-cli'
-VERSION = '0.1'
+VERSION = '0.2'
 
 from setuptools import setup, find_packages
 
-try:
-    long_description = open('README.md', 'rt').read()
-except IOError:
-    long_description = ''
+long_description = \
+    'https://github.com/floydsoft/kaggle-cli/blob/master/README.md'
 
 setup(
     name=PROJECT,
