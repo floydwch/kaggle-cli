@@ -4,7 +4,7 @@ import os
 
 
 class Config(Command):
-    'Config.'
+    'Set config.'
 
     def get_parser(self, prog_name):
         parser = super(Config, self).get_parser(prog_name)
