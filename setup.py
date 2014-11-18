@@ -40,7 +40,7 @@ setup(
     scripts=[],
 
     provides=[],
-    install_requires=['cliff', 'mechanize', 'lxml'],
+    install_requires=['cliff', 'mechanize', 'lxml', 'cssselect'],
 
     namespace_packages=[],
     packages=find_packages(),
@@ -51,7 +51,8 @@ setup(
             'kg = kaggle_cli.main:main'
         ],
         'kaggle_cli': [
-            'submit = kaggle_cli.submit:Entry'
+            'submit = kaggle_cli.submit:Submit',
+            'config = kaggle_cli.config:Config'
         ],
     },
 

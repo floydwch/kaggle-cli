@@ -11,10 +11,22 @@ $ pip install kaggle_cli
 
 ### Submit
 ```
-$ kg submit `competition` `entry` -u `username` -p `password` -m `message`
+$ kg submit `entry` -u `username` -p `password` -c `competition` -m `message`
+```
+
+### Config
+```
+$ kg config -u `username` -p `password` -c `competition`
 ```
 
 #### Example
 ```
-$ kg submit titanic-gettingStarted sampleSubmission.csv -u USERNAME -p PASSWORD -m "Enter a brief description of this submission here."
+$ kg submit sampleSubmission.csv -c titanic-gettingStarted -u USERNAME -p PASSWORD -m "Enter a brief description of this submission here."
+```
+
+or
+
+```
+$ kg config -c titanic-gettingStarted -u USERNAME -p PASSWORD
+$ kg submit sampleSubmission.csv -m "Enter a brief description of this submission here."
 ```
