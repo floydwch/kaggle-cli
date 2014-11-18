@@ -13,7 +13,7 @@ class Entry(Command):
         parser.add_argument('competition', help='competition name')
         parser.add_argument('entry', help='entry file')
 
-        parser.add_argument('-m', '--message', help='username')
+        parser.add_argument('-m', '--message', help='message')
         parser.add_argument('-u', '--username', help='username',
                             required=True)
         parser.add_argument('-p', '--password', help='password',
