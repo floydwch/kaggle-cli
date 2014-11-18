@@ -10,11 +10,22 @@ $ pip install kaggle-cli
 
 
 ### Submit
+To submit an entry.
+
 ```
 $ kg submit `entry` -u `username` -p `password` -c `competition` -m `message`
 ```
 
+### Download
+To download the data files.
+
+```
+$ kg download -u `username` -p `password` -c `competition`
+```
+
 ### Config
+To set config.
+
 ```
 $ kg config -u `username` -p `password` -c `competition`
 ```
