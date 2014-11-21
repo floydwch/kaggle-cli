@@ -1,7 +1,6 @@
 from cliff.command import Command
 from mechanize import Browser
 from lxml import html
-import wget
 import ConfigParser
 import os
 
@@ -63,4 +62,5 @@ class Download(Command):
             data_page.cssselect('#data-files a'))
 
         for url in src_urls:
-            wget.download(url)
+            self.app.stdout.write('downloading %s\n' % url)
+            browser.retrieve(url, url.split('/')[-1])

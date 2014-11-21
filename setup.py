@@ -2,7 +2,7 @@
 
 
 PROJECT = 'kaggle-cli'
-VERSION = '0.3'
+VERSION = '0.3.1'
 
 from setuptools import setup, find_packages
 
@@ -38,7 +38,7 @@ setup(
     scripts=[],
 
     provides=[],
-    install_requires=['cliff', 'mechanize', 'lxml', 'cssselect', 'wget'],
+    install_requires=['cliff', 'mechanize', 'lxml', 'cssselect'],
 
     namespace_packages=[],
     packages=find_packages(),
