@@ -17,7 +17,7 @@ $ kg submit `entry` -u `username` -p `password` -c `competition` -m `message`
 ```
 
 ### Download
-To download the data files.
+To download the data files, accepting the competition rules before your command.
 
 ```
 $ kg download -u `username` -p `password` -c `competition`
