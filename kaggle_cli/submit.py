@@ -46,7 +46,7 @@ class Submit(Command):
 
         base = 'https://www.kaggle.com'
 
-        login_url = base
+        login_url = 'https://www.kaggle.com/account/login'
 
         submit_url = '/'.join([base, 'c', competition, 'submissions', 'attach'])
 
