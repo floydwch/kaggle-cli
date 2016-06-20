@@ -43,6 +43,10 @@ class Submit(Command):
                 competition = parsed_args.competition
             else:
                 competition = config.get('user', 'competition')
+        else:
+            username = parsed_args.username
+            password = parsed_args.password
+            competition = parsed_args.competition
 
         base = 'https://www.kaggle.com'
         login_url = 'https://www.kaggle.com/account/login'

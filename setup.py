@@ -2,7 +2,7 @@
 
 
 PROJECT = 'kaggle-cli'
-VERSION = '0.3.2'
+VERSION = '0.3.3'
 
 from setuptools import setup, find_packages
 
