@@ -45,9 +45,7 @@ class Submit(Command):
                 competition = config.get('user', 'competition')
 
         base = 'https://www.kaggle.com'
-
         login_url = 'https://www.kaggle.com/account/login'
-
         submit_url = '/'.join([base, 'c', competition, 'submissions', 'attach'])
 
         entry = parsed_args.entry
@@ -73,16 +71,15 @@ class Submit(Command):
 
         browser.submit()
 
-        while True:
-            leaderboard = html.fromstring(browser.response().read())
-            score = leaderboard.cssselect(
-                '.submission-results strong')
+        # while True:
+        #     leaderboard = html.fromstring(browser.response().read())
+        #     score = leaderboard.cssselect('.submission-result strong')
 
-            if len(score) and score[0].text_content():
-                score = score[0].text_content()
-                break
+        #     if len(score) and score[0].text_content():
+        #         score = score[0].text_content()
+        #         break
 
-            sleep(30)
-            browser.reload()
+        #     sleep(30)
+        #     browser.reload()
 
-        self.app.stdout.write(score + '\n')
+        # self.app.stdout.write(score + '\n')

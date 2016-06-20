@@ -41,7 +41,7 @@ class Download(Command):
                 competition = config.get('user', 'competition')
 
         base = 'https://www.kaggle.com'
-        login_url = base
+        login_url = 'https://www.kaggle.com/account/login'
         data_url = '/'.join([base, 'c', competition, 'data'])
 
         browser = Browser()
