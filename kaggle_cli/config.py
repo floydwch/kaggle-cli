@@ -20,7 +20,7 @@ class Config(Command):
         config_dir = os.path.expanduser(config_dir)
 
         if not os.path.isdir(config_dir):
-            os.mkdir(config_dir)
+            os.mkdir(config_dir, 0o600)
 
         config = ConfigParser.ConfigParser(allow_no_value=True)
 
@@ -43,3 +43,4 @@ class Config(Command):
             config.set('user', 'competition', competition)
 
         config.write(open(config_dir + '/config', 'w'))
+        os.chmod(config_dir + '/config', 600)
