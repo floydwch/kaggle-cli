@@ -25,7 +25,13 @@ $ kg download -u `username` -p `password` -c `competition`
 ```
 
 ### Config
-To set config.
+To set global config.
+
+```
+$ kg config -g -u `username` -p `password` -c `competition`
+```
+
+or local config:
 
 ```
 $ kg config -u `username` -p `password` -c `competition`
