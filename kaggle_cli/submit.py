@@ -22,8 +22,42 @@ class Submit(Command):
         return parser
 
     def take_action(self, parsed_args):
-        config_dir = '~/.kaggle-cli'
-        config_dir = os.path.expanduser(config_dir)
+        prefix = ''
+        while True:
+            config_dir = './.kaggle-cli'
+            if os.path.isdir(prefix + '.kaggle-cli'):
+                config_dir = os.path.expanduser(config_dir)
+                break
+            else:
+                if os.path.expanduser(config_dir) !=\
+                        os.path.expanduser('~'):
+                    prefix = prefix + '../'
+                else:
+                    config_dir = os.path.expanduser(config_dir)
+                    os.mkdir(config_dir, 0o700)
+                    break
+
+        global_config_dir = '~/.kaggle-cli'
+        global_config_dir = os.path.expanduser(global_config_dir)
+
+        if os.path.isdir(global_config_dir):
+            global_config = ConfigParser.ConfigParser(allow_no_value=True)
+            global_config.readfp(open(global_config_dir + '/config'))
+
+            if parsed_args.username:
+                username = parsed_args.username
+            else:
+                username = global_config.get('user', 'username')
+
+            if parsed_args.password:
+                password = parsed_args.password
+            else:
+                password = global_config.get('user', 'password')
+
+            if parsed_args.competition:
+                competition = parsed_args.competition
+            else:
+                competition = global_config.get('user', 'competition')
 
         if os.path.isdir(config_dir):
             config = ConfigParser.ConfigParser(allow_no_value=True)
@@ -32,17 +66,20 @@ class Submit(Command):
             if parsed_args.username:
                 username = parsed_args.username
             else:
-                username = config.get('user', 'username')
+                if config.has_option('user', 'username'):
+                    username = config.get('user', 'username')
 
             if parsed_args.password:
                 password = parsed_args.password
             else:
-                password = config.get('user', 'password')
+                if config.has_option('user', 'password'):
+                    password = config.get('user', 'password')
 
             if parsed_args.competition:
                 competition = parsed_args.competition
             else:
-                competition = config.get('user', 'competition')
+                if config.has_option('user', 'competition'):
+                    competition = config.get('user', 'competition')
         else:
             username = parsed_args.username
             password = parsed_args.password
