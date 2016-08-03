@@ -30,14 +30,14 @@ class Config(Command):
             while True:
                 config_dir = './.kaggle-cli'
                 if os.path.isdir(prefix + '.kaggle-cli'):
-                    config_dir = os.path.expanduser(config_dir)
+                    config_dir = os.path.abspath(config_dir)
                     break
                 else:
-                    if os.path.expanduser(config_dir) !=\
+                    if os.path.abspath(config_dir) !=\
                             os.path.expanduser('~'):
                         prefix = prefix + '../'
                     else:
-                        config_dir = os.path.expanduser(config_dir)
+                        config_dir = os.path.abspath(config_dir)
                         os.mkdir(config_dir, 0o700)
                         break
 

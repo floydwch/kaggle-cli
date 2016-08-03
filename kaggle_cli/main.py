@@ -8,7 +8,7 @@ class KaggleCLI(App):
     def __init__(self):
         super(KaggleCLI, self).__init__(
             description='An unofficial Kaggle command line tool.',
-            version='0.4.0',
+            version='0.4.1',
             command_manager=CommandManager('kaggle_cli'),
         )
 
