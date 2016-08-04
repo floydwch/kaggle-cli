@@ -24,17 +24,14 @@ class Submit(Command):
     def take_action(self, parsed_args):
         prefix = ''
         while True:
-            config_dir = './.kaggle-cli'
-            if os.path.isdir(prefix + '.kaggle-cli'):
-                config_dir = os.path.abspath(config_dir)
+            config_dir = '.kaggle-cli'
+            if os.path.isdir(prefix + config_dir) or \
+                os.path.abspath(prefix) == os.path.expanduser('~') or \
+                    os.path.abspath(prefix) == os.path.abspath('/'):
                 break
-            else:
-                if os.path.abspath(config_dir) !=\
-                        os.path.expanduser('~'):
-                    prefix = prefix + '../'
-                else:
-                    config_dir = os.path.abspath(config_dir)
-                    break
+            prefix = prefix + '../'
+
+        config_dir = os.path.abspath(prefix + config_dir)
 
         global_config_dir = '~/.kaggle-cli'
         global_config_dir = os.path.expanduser(global_config_dir)

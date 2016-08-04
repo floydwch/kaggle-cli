@@ -25,24 +25,25 @@ class Config(Command):
         if vars(parsed_args)['global']:
             config_dir = '~/.kaggle-cli'
             config_dir = os.path.expanduser(config_dir)
+            if not os.path.isdir(config_dir):
+                os.mkdir(config_dir, 0o700)
         else:
             prefix = ''
             while True:
-                config_dir = './.kaggle-cli'
-                if os.path.isdir(prefix + '.kaggle-cli'):
-                    config_dir = os.path.abspath(config_dir)
+                config_dir = '.kaggle-cli'
+                if os.path.isdir(prefix + config_dir) or \
+                    os.path.abspath(prefix) == os.path.expanduser('~') or \
+                        os.path.abspath(prefix) == os.path.abspath('/'):
                     break
-                else:
-                    if os.path.abspath(config_dir) !=\
-                            os.path.expanduser('~'):
-                        prefix = prefix + '../'
-                    else:
-                        config_dir = os.path.abspath(config_dir)
-                        os.mkdir(config_dir, 0o700)
-                        break
+                prefix = prefix + '../'
 
-        if not os.path.isdir(config_dir):
-            os.mkdir(config_dir, 0o700)
+            if not os.path.isdir(prefix + config_dir) or \
+                    os.path.abspath(prefix) == os.path.expanduser('~') or \
+                    os.path.abspath(prefix) == os.path.abspath('/'):
+                if not os.path.isdir(config_dir):
+                    os.mkdir(config_dir, 0o700)
+            else:
+                config_dir = prefix + config_dir
 
         config = ConfigParser.ConfigParser(allow_no_value=True)
 
