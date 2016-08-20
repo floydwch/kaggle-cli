@@ -1,5 +1,5 @@
 from cliff.command import Command
-import ConfigParser
+from configparser import ConfigParser
 import os
 
 
@@ -45,7 +45,7 @@ class Config(Command):
             else:
                 config_dir = prefix + config_dir
 
-        config = ConfigParser.ConfigParser(allow_no_value=True)
+        config = ConfigParser(allow_no_value=True)
 
         if os.path.isfile(config_dir + '/config'):
             config.readfp(open(config_dir + '/config'))
