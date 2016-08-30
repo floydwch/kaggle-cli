@@ -1,9 +1,6 @@
 from cliff.command import Command
-from mechanize import Browser
-from lxml import html
-import ConfigParser
-import os
-
+import shutil
+from . import common
 
 class Download(Command):
     'Download data files from a specific competition.'
@@ -18,86 +15,25 @@ class Download(Command):
         return parser
 
     def take_action(self, parsed_args):
-        prefix = ''
-        while True:
-            config_dir = '.kaggle-cli'
-            if os.path.isdir(prefix + config_dir) or \
-                os.path.abspath(prefix) == os.path.expanduser('~') or \
-                    os.path.abspath(prefix) == os.path.abspath('/'):
-                break
-            prefix = prefix + '../'
-
-        config_dir = os.path.abspath(prefix + config_dir)
-
-        global_config_dir = '~/.kaggle-cli'
-        global_config_dir = os.path.expanduser(global_config_dir)
-
-        if os.path.isdir(global_config_dir):
-            global_config = ConfigParser.ConfigParser(allow_no_value=True)
-            global_config.readfp(open(global_config_dir + '/config'))
-
-            if parsed_args.username:
-                username = parsed_args.username
-            else:
-                username = global_config.get('user', 'username')
-
-            if parsed_args.password:
-                password = parsed_args.password
-            else:
-                password = global_config.get('user', 'password')
-
-            if parsed_args.competition:
-                competition = parsed_args.competition
-            else:
-                competition = global_config.get('user', 'competition')
-
-        if os.path.isdir(config_dir):
-            config = ConfigParser.ConfigParser(allow_no_value=True)
-            config.readfp(open(config_dir + '/config'))
-
-            if parsed_args.username:
-                username = parsed_args.username
-            else:
-                if config.has_option('user', 'username'):
-                    username = config.get('user', 'username')
-
-            if parsed_args.password:
-                password = parsed_args.password
-            else:
-                if config.has_option('user', 'password'):
-                    password = config.get('user', 'password')
-
-            if parsed_args.competition:
-                competition = parsed_args.competition
-            else:
-                if config.has_option('user', 'competition'):
-                    competition = config.get('user', 'competition')
-        else:
-            username = parsed_args.username
-            password = parsed_args.password
-            competition = parsed_args.competition
+        (username, password, competition) = common.get_config(parsed_args)
+        browser = common.login(username, password)
 
         base = 'https://www.kaggle.com'
-        login_url = 'https://www.kaggle.com/account/login'
         data_url = '/'.join([base, 'c', competition, 'data'])
 
-        browser = Browser()
+        data_page = browser.get(data_url)
+        links = data_page.soup.find(id='data-files').find_all('a')
 
-        browser.open(login_url)
-        browser.select_form(nr=0)
+        for link in links:
+            url = base + link.get('href')
+            self.download_file(browser, url)
 
-        browser['UserName'] = username
-        browser['Password'] = password
+    def download_file(self, browser, url):
+        self.app.stdout.write('downloading %s\n' % url)
+        local_filename = url.split('/')[-1]
+        stream = browser.get(url, stream=True)
+        with open(local_filename, 'wb') as f:
+            for chunk in stream.iter_content(chunk_size=1024): 
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
 
-        browser.submit()
-
-        browser.open(data_url)
-        data_page = html.fromstring(browser.response().read())
-
-        src_urls = map(
-            lambda x: base + x.attrib['href'],
-            data_page.cssselect('#data-files a'))
-
-        for url in src_urls:
-            self.app.stdout.write('downloading %s\n' % url)
-            browser.retrieve(url, url.split('/')[-1])
