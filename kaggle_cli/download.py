@@ -32,8 +32,26 @@ class Download(Command):
         self.app.stdout.write('downloading %s\n' % url)
         local_filename = url.split('/')[-1]
         stream = browser.get(url, stream=True)
+        if not self.is_html_response(stream):
+            warning = ("Warning: download url for file %s resolves to an html document rather than a downloadable file. \n"
+                        "See the downloaded file for details. Is it possible you have not accepted the competition's rules on the kaggle website?") % local_filename
+            self.app.stdout.write(warning+"\n")
         with open(local_filename, 'wb') as f:
             for chunk in stream.iter_content(chunk_size=1024): 
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
 
+    def is_html_response(self, response):
+        """
+        Checks whether the response object is a html page or a likely downloadable file.
+        Intended to detect error pages or prompts such as kaggle's competition rules acceptance prompt.
+
+        Returns True if the response is a html page. False otherwise.
+        """
+        content_type = response.headers.get('Content-Type', "")
+        content_disp = response.headers.get('Content-Disposition', "")
+        if "text/html" in content_type and not "attachment" in content_disp:
+            # This response is a html file which is not marked as an attachment,
+            # so we likely hit a rules acceptance prompt
+            return False
+        return True
