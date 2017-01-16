@@ -11,11 +11,13 @@ class Download(Command):
         parser.add_argument('-c', '--competition', help='competition')
         parser.add_argument('-u', '--username', help='username')
         parser.add_argument('-p', '--password', help='password')
+        parser.add_argument('-f', '--filename', help='filename')
 
         return parser
 
     def take_action(self, parsed_args):
         (username, password, competition) = common.get_config(parsed_args)
+        file_name = parsed_args.filename
         browser = common.login(username, password)
 
         base = 'https://www.kaggle.com'
@@ -25,8 +27,9 @@ class Download(Command):
         links = data_page.soup.find(id='data-files').find_all('a')
 
         for link in links:
-            url = base + link.get('href')
-            self.download_file(browser, url)
+            if file_name is None or link.get('name') == file_name:
+                url = base + link.get('href')
+                self.download_file(browser, url)
 
     def download_file(self, browser, url):
         self.app.stdout.write('downloading %s\n' % url)
