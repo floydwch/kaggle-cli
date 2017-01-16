@@ -24,6 +24,12 @@ To download the data files.
 $ kg download -u `username` -p `password` -c `competition`
 ```
 
+To download a specific data file.
+
+```
+$ kg download -u `username` -p `password` -c `competition` -f `train.zip`
+```
+
 ### Config
 To set global config.
 
