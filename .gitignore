@@ -1,0 +1,4 @@
+*.sublime-*
+*.egg-info
+build
+dist
