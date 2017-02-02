@@ -3,12 +3,15 @@ from cliff.app import App
 from cliff.commandmanager import CommandManager
 
 
+VERSION = '0.6.0'
+
+
 class KaggleCLI(App):
 
     def __init__(self):
         super(KaggleCLI, self).__init__(
             description='An unofficial Kaggle command line tool.',
-            version='0.6.0',
+            version=VERSION,
             command_manager=CommandManager('kaggle_cli'),
         )
 

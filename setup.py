@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+from setuptools import setup, find_packages
+
+from kaggle_cli.main import VERSION
 
 
 PROJECT = 'kaggle-cli'
-VERSION = '0.6.0'
 
-from setuptools import setup, find_packages
 
 long_description = \
     'https://github.com/floydsoft/kaggle-cli/blob/master/README.md'
