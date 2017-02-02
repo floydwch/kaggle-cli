@@ -1,5 +1,6 @@
 from cliff.command import Command
 import shutil
+import re
 from . import common
 
 class Download(Command):
@@ -24,11 +25,13 @@ class Download(Command):
         data_url = '/'.join([base, 'c', competition, 'data'])
 
         data_page = browser.get(data_url)
-        links = data_page.soup.find(id='data-files').find_all('a')
+
+        data=str(data_page.soup)
+        links=re.findall('"url":"(/c/'+competition+'/download/[^"]+)"', data)
 
         for link in links:
-            if file_name is None or link.get('name') == file_name:
-                url = base + link.get('href')
+            url = base + link
+            if file_name is None or url.endswith('/' + file_name):
                 self.download_file(browser, url)
 
     def download_file(self, browser, url):
