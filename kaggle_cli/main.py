@@ -3,7 +3,7 @@ from cliff.app import App
 from cliff.commandmanager import CommandManager
 
 
-VERSION = '0.6.0'
+VERSION = '0.6.1'
 
 
 class KaggleCLI(App):
