@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 
-from kaggle_cli.main import VERSION
+from kaggle_cli.meta import VERSION
 
 
 PROJECT = 'kaggle-cli'
