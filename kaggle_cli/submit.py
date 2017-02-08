@@ -1,6 +1,8 @@
 from cliff.command import Command
-from time import sleep
+
 from . import common
+from .config import get_final_config
+
 
 class Submit(Command):
     'Submit an entry to a specific competition.'
@@ -18,9 +20,13 @@ class Submit(Command):
         return parser
 
     def take_action(self, parsed_args):
-        (username, password, competition) = common.get_config(parsed_args)
-        browser = common.login(username, password)
+        config = get_final_config(parsed_args)
 
+        username = config['username']
+        password = config['password']
+        competition = config['competition']
+
+        browser = common.login(username, password)
         base = 'https://www.kaggle.com'
         submit_url = '/'.join([base, 'c', competition, 'submissions', 'attach'])
 

@@ -1,17 +1,70 @@
-from cliff.command import Command
-from configparser import ConfigParser
 import os
+from configparser import ConfigParser
+from functools import reduce
+from itertools import starmap
+
+from cliff.command import Command
+
+
+CONFIG_DIR_NAME = '.kaggle-cli'
+CONFIG_FILE_NAME = 'config'
+DATA_OPTIONS = set(['username', 'password', 'competition'])
+
+
+def get_config_candidates(curdir):
+    # derive parent dir of homedir
+    while curdir != os.path.dirname(os.path.expanduser('~')):
+        config_path = os.path.join(
+            curdir, CONFIG_DIR_NAME, CONFIG_FILE_NAME
+        )
+        if os.path.isfile(config_path):
+            config = ConfigParser(allow_no_value=True)
+            config_file = open(config_path)
+            config.read_file(config_file)
+            yield config
+        curdir = os.path.dirname(curdir)  # derive parent dir
+
+
+def merge_dicts(x, y={}):
+    z = x.copy()
+    z.update(y)
+    return z
+
+
+def get_working_config(configs):
+    return reduce(
+        lambda working_config, config:
+            merge_dicts(config, working_config),
+        map(lambda config: dict(config['user']), configs)
+    )
+
+
+def get_inline_config(parsed_args):
+    parsed_arg_dict = vars(parsed_args)
+    return dict(
+        (k, parsed_arg_dict[k]) for k in DATA_OPTIONS if parsed_arg_dict[k]
+    )
+
+
+def get_final_config(parsed_args):
+    return merge_dicts(
+        get_working_config(get_config_candidates(os.getcwd())),
+        get_inline_config(parsed_args)
+    )
 
 
 class Config(Command):
     'Set config.'
 
+    def __init__(self, app, app_args, **kargs):
+        super(self.__class__, self).__init__(app, app_args, **kargs)
+
     def get_parser(self, prog_name):
         parser = super(Config, self).get_parser(prog_name)
 
-        parser.add_argument('-c', '--competition', help='competition')
         parser.add_argument('-u', '--username', help='username')
         parser.add_argument('-p', '--password', help='password')
+        parser.add_argument('-c', '--competition', help='competition')
         parser.add_argument(
             '-g',
             '--global',
@@ -22,48 +75,53 @@ class Config(Command):
         return parser
 
     def take_action(self, parsed_args):
-        if vars(parsed_args)['global']:
-            config_dir = '~/.kaggle-cli'
-            config_dir = os.path.expanduser(config_dir)
+        parsed_arg_dict = vars(parsed_args)
+
+        if DATA_OPTIONS & set(
+            filter(lambda x: parsed_arg_dict[x], parsed_arg_dict)
+        ):
+            if parsed_arg_dict['global']:
+                config_dir = os.path.join(
+                    os.path.expanduser('~'), CONFIG_DIR_NAME
+                )
+            else:
+                config_dir = os.path.join(os.getcwd(), CONFIG_DIR_NAME)
+
             if not os.path.isdir(config_dir):
                 os.mkdir(config_dir, 0o700)
-        else:
-            prefix = ''
-            while True:
-                config_dir = '.kaggle-cli'
-                if os.path.isdir(prefix + config_dir) or \
-                    os.path.abspath(prefix) == os.path.expanduser('~') or \
-                        os.path.abspath(prefix) == os.path.abspath('/'):
-                    break
-                prefix = prefix + '../'
 
-            if not os.path.isdir(prefix + config_dir) or \
-                    os.path.abspath(prefix) == os.path.expanduser('~') or \
-                    os.path.abspath(prefix) == os.path.abspath('/'):
-                if not os.path.isdir(config_dir):
-                    os.mkdir(config_dir, 0o700)
+            config = ConfigParser(allow_no_value=True)
+            config_path = os.path.join(config_dir, CONFIG_FILE_NAME)
+
+            if os.path.isfile(config_path):
+                with open(config_path, 'r') as config_file:
+                    config.read_file(config_file)
             else:
-                config_dir = prefix + config_dir
+                with open(config_path, 'w') as config_file:
+                    os.chmod(config_path, 0o700)
 
-        config = ConfigParser(allow_no_value=True)
+            if not config.has_section('user'):
+                config.add_section('user')
 
-        if os.path.isfile(config_dir + '/config'):
-            config.readfp(open(config_dir + '/config'))
+            if parsed_arg_dict['username']:
+                config.set('user', 'username', parsed_arg_dict['username'])
 
-        if not config.has_section('user'):
-            config.add_section('user')
+            if parsed_arg_dict['password']:
+                config.set('user', 'password', parsed_arg_dict['password'])
 
-        if parsed_args.username:
-            username = parsed_args.username
-            config.set('user', 'username', username)
+            if parsed_arg_dict['competition']:
+                config.set(
+                    'user', 'competition',
+                    parsed_arg_dict['competition']
+                )
 
-        if parsed_args.password:
-            password = parsed_args.password
-            config.set('user', 'password', password)
-
-        if parsed_args.competition:
-            competition = parsed_args.competition
-            config.set('user', 'competition', competition)
-
-        config.write(open(config_dir + '/config', 'w'))
-        os.chmod(config_dir + '/config', 0o700)
+            with open(config_path, 'w') as config_file:
+                config.write(config_file)
+        else:
+            print('Working config:')
+            print(list(starmap(
+                lambda k, v: (k, '********') if k == 'password' else (k, v),
+                get_working_config(
+                    get_config_candidates(os.getcwd())
+                ).items())
+            ))

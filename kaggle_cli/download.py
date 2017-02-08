@@ -1,7 +1,9 @@
 from cliff.command import Command
-import shutil
 import re
+
 from . import common
+from .config import get_final_config
+
 
 class Download(Command):
     'Download data files from a specific competition.'
@@ -17,17 +19,22 @@ class Download(Command):
         return parser
 
     def take_action(self, parsed_args):
-        (username, password, competition) = common.get_config(parsed_args)
-        file_name = parsed_args.filename
-        browser = common.login(username, password)
+        config = get_final_config(parsed_args)
+        print(config)
 
+        username = config['username']
+        password = config['password']
+        competition = config['competition']
+        file_name = parsed_args.filename
+
+        browser = common.login(username, password)
         base = 'https://www.kaggle.com'
         data_url = '/'.join([base, 'c', competition, 'data'])
 
         data_page = browser.get(data_url)
 
-        data=str(data_page.soup)
-        links=re.findall('"url":"(/c/'+competition+'/download/[^"]+)"', data)
+        data = str(data_page.soup)
+        links = re.findall('"url":"(/c/'+competition+'/download/[^"]+)"', data)
 
         for link in links:
             url = base + link
@@ -43,7 +50,7 @@ class Download(Command):
                         "See the downloaded file for details. Is it possible you have not accepted the competition's rules on the kaggle website?") % local_filename
             self.app.stdout.write(warning+"\n")
         with open(local_filename, 'wb') as f:
-            for chunk in stream.iter_content(chunk_size=1024): 
+            for chunk in stream.iter_content(chunk_size=1024):
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
 

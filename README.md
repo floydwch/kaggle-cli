@@ -43,6 +43,12 @@ or local config:
 $ kg config -u `username` -p `password` -c `competition`
 ```
 
+Show working config:
+
+```
+$ kg config
+```
+
 ## Example
 ```
 $ kg submit sampleSubmission.csv -c titanic-gettingStarted -u USERNAME -p PASSWORD -m "Enter a brief description of this submission here."
