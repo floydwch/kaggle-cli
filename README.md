@@ -30,6 +30,14 @@ To download a specific data file.
 $ kg download -u `username` -p `password` -c `competition` -f `train.zip`
 ```
 
+### Dataset
+
+To download a dataset.
+
+```
+$ kg download -u `username` -p `password` -o `owner` -d `dataset`
+```
+
 ### Config
 To set global config.
 
