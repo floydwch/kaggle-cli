@@ -68,3 +68,35 @@ class Download(Command):
             # so we likely hit a rules acceptance prompt
             return False
         return True
+
+class Dataset(Download):
+    'Download dataset from a specific user.'
+
+    def get_parser(self, prog_name):
+        parser = super(Dataset, self).get_parser(prog_name)
+        parser.add_argument('-d', '--dataset', help='dataset')
+        parser.add_argument('-o', '--owner', help='owner')
+        return parser
+
+    def take_action(self, parsed_args):
+        config = get_final_config(parsed_args)
+
+        username = config['username']
+        password = config['password']
+        dataset = parsed_args.dataset
+        owner = parsed_args.owner
+        file_name = parsed_args.filename
+
+        browser = common.login(username, password)
+        base = 'https://www.kaggle.com'
+        data_url = '/'.join([base, owner, dataset])
+
+        data_page = browser.get(data_url)
+
+        data = str(data_page.soup)
+        links = re.findall('"url":"(/'+owner+'/'+dataset+'/downloads/[^"]+)"', data)
+
+        for link in links:
+            url = base + link
+            if file_name is None or url.endswith('/' + file_name):
+                self.download_file(browser, url)

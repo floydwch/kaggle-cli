@@ -52,7 +52,8 @@ setup(
         'kaggle_cli': [
             'submit = kaggle_cli.submit:Submit',
             'config = kaggle_cli.config:Config',
-            'download = kaggle_cli.download:Download'
+            'download = kaggle_cli.download:Download',
+            'dataset = kaggle_cli.download:Dataset'
         ],
     },
 
