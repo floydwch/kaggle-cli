@@ -54,7 +54,7 @@ class Download(Command):
         stream = browser.get(url, stream=True, headers=headers)
 
         if stream.headers.get('x-ms-copy-status', None) == 'success':
-            if not self.is_html_response(stream):
+            if not self.is_downloadable(stream):
                 warning = ("Warning: download url for file %s resolves to an html document rather than a downloadable file. \n"
                             "See the downloaded file for details. Is it possible you have not accepted the competition's rules on the kaggle website?") % local_filename
                 self.app.stdout.write(warning+"\n")
@@ -64,7 +64,7 @@ class Download(Command):
                     if chunk: # filter out keep-alive new chunks
                         f.write(chunk)
 
-    def is_html_response(self, response):
+    def is_downloadable(self, response):
         """
         Checks whether the response object is a html page or a likely downloadable file.
         Intended to detect error pages or prompts such as kaggle's competition rules acceptance prompt.
