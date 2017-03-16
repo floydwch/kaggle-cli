@@ -18,7 +18,7 @@ $ kg submit `entry` -u `username` -p `password` -c `competition` -m `message`
 ```
 
 ### Download
-To download the data files.
+To download the data files (resumable).
 
 ```
 $ kg download -u `username` -p `password` -c `competition`
@@ -32,7 +32,7 @@ $ kg download -u `username` -p `password` -c `competition` -f `train.zip`
 
 ### Dataset
 
-To download a dataset.
+To download a dataset (resumable).
 
 ```
 $ kg download -u `username` -p `password` -o `owner` -d `dataset`
