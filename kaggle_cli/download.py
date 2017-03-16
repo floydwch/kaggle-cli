@@ -1,5 +1,7 @@
-from cliff.command import Command
+import os
 import re
+
+from cliff.command import Command
 
 from . import common
 from .config import get_final_config
@@ -43,15 +45,24 @@ class Download(Command):
     def download_file(self, browser, url):
         self.app.stdout.write('downloading %s\n' % url)
         local_filename = url.split('/')[-1]
-        stream = browser.get(url, stream=True)
-        if not self.is_html_response(stream):
-            warning = ("Warning: download url for file %s resolves to an html document rather than a downloadable file. \n"
-                        "See the downloaded file for details. Is it possible you have not accepted the competition's rules on the kaggle website?") % local_filename
-            self.app.stdout.write(warning+"\n")
-        with open(local_filename, 'wb') as f:
-            for chunk in stream.iter_content(chunk_size=1024):
-                if chunk: # filter out keep-alive new chunks
-                    f.write(chunk)
+        headers = {}
+
+        if os.path.isfile(local_filename):
+            file_size = os.path.getsize(local_filename)
+            headers['Range'] = 'bytes={}-'.format(file_size)
+
+        stream = browser.get(url, stream=True, headers=headers)
+
+        if stream.headers.get('x-ms-copy-status', None) == 'success':
+            if not self.is_html_response(stream):
+                warning = ("Warning: download url for file %s resolves to an html document rather than a downloadable file. \n"
+                            "See the downloaded file for details. Is it possible you have not accepted the competition's rules on the kaggle website?") % local_filename
+                self.app.stdout.write(warning+"\n")
+
+            with open(local_filename, 'ab') as f:
+                for chunk in stream.iter_content(chunk_size=1024, decode_unicode=True):
+                    if chunk: # filter out keep-alive new chunks
+                        f.write(chunk)
 
     def is_html_response(self, response):
         """
