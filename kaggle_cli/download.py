@@ -46,19 +46,24 @@ class Download(Command):
         self.app.stdout.write('downloading %s\n' % url)
         local_filename = url.split('/')[-1]
         headers = {}
+        done = False
 
         if os.path.isfile(local_filename):
             file_size = os.path.getsize(local_filename)
-            headers['Range'] = 'bytes={}-'.format(file_size)
+            content_length = int(
+                browser.request('head', url).headers.get('Content-Length')
+            )
+            if file_size < content_length:
+                headers['Range'] = 'bytes={}-'.format(file_size)
+            else:
+                done = True
 
-        stream = browser.get(url, stream=True, headers=headers)
-
-        if stream.headers.get('x-ms-copy-status', None) == 'success':
+        if not done:
+            stream = browser.get(url, stream=True, headers=headers)
             if not self.is_downloadable(stream):
                 warning = ("Warning: download url for file %s resolves to an html document rather than a downloadable file. \n"
                             "See the downloaded file for details. Is it possible you have not accepted the competition's rules on the kaggle website?") % local_filename
                 self.app.stdout.write(warning+"\n")
-
             with open(local_filename, 'ab') as f:
                 for chunk in stream.iter_content(chunk_size=1024, decode_unicode=True):
                     if chunk: # filter out keep-alive new chunks
