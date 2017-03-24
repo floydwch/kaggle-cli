@@ -46,7 +46,7 @@ class Download(Command):
                 self.download_file(browser, url)
 
     def download_file(self, browser, url):
-        self.app.stdout.write('downloading %s\n' % url)
+        self.app.stdout.write('downloading {}\n'.format(url))
         local_filename = url.split('/')[-1]
         headers = {}
         done = False
@@ -94,9 +94,7 @@ class Download(Command):
                 )
                 self.app.stdout.write('{}\n'.format(warning))
             with open(local_filename, 'ab') as f:
-                for chunk in stream.iter_content(
-                    chunk_size=1024, decode_unicode=True
-                ):
+                for chunk in stream.iter_content(chunk_size=1024):
                     if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
                         finished_bytes += len(chunk)
