@@ -46,16 +46,19 @@ class Download(Command):
                 self.download_file(browser, url)
 
     def download_file(self, browser, url):
-        self.app.stdout.write('downloading {}\n'.format(url))
+        print('downloading {}\n'.format(url))
         local_filename = url.split('/')[-1]
         headers = {}
         done = False
         file_size = 0
-
-        bar = progressbar.ProgressBar()
         content_length = int(
             browser.request('head', url).headers.get('Content-Length')
         )
+
+        bar = progressbar.ProgressBar()
+        widgets = [local_filename, ' ', progressbar.Percentage(), ' ',
+                   progressbar.Bar(marker='#'), ' ',
+                   progressbar.ETA(), ' ', progressbar.FileTransferSpeed()]
 
         if os.path.isfile(local_filename):
             file_size = os.path.getsize(local_filename)
@@ -65,13 +68,10 @@ class Download(Command):
                 done = True
 
         finished_bytes = file_size
-        widgets = [local_filename, ' ', progressbar.Percentage(), ' ',
-                   progressbar.Bar(marker='#'), ' ',
-                   progressbar.ETA(), ' ', progressbar.FileTransferSpeed()]
 
         if file_size == content_length:
             print('{} already downloaded !'.format(local_filename))
-            return local_filename
+            return
         elif file_size > content_length:
             print('Something wrong here, Incorrect file !')
             return
@@ -92,7 +92,7 @@ class Download(Command):
                     'accepted the competition\'s rules on the kaggle website?'
                     .format(local_filename)
                 )
-                self.app.stdout.write('{}\n'.format(warning))
+                print('{}\n'.format(warning))
             with open(local_filename, 'ab') as f:
                 for chunk in stream.iter_content(chunk_size=1024):
                     if chunk:  # filter out keep-alive new chunks
