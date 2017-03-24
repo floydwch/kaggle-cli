@@ -2,12 +2,11 @@ import os
 import re
 
 from cliff.command import Command
+import progressbar
 
 from . import common
 from .config import get_final_config
 
-import progressbar
-from contextlib import closing
 
 class Download(Command):
     'Download data files from a specific competition.'
@@ -37,7 +36,9 @@ class Download(Command):
         data_page = browser.get(data_url)
 
         data = str(data_page.soup)
-        links = re.findall('"url":"(/c/'+competition+'/download/[^"]+)"', data)
+        links = re.findall(
+            '"url":"(/c/{}/download/[^"]+)"'.format(competition), data
+        )
 
         for link in links:
             url = base + link
@@ -66,7 +67,7 @@ class Download(Command):
 
         self.bytes = file_size
         widgets = [local_filename, ' ', progressbar.Percentage(), ' ',
-                   progressbar.Bar(marker="#"), ' ',
+                   progressbar.Bar(marker='#'), ' ',
                    progressbar.ETA(), ' ', progressbar.FileTransferSpeed()]
 
         if file_size == content_length:
@@ -84,31 +85,46 @@ class Download(Command):
         if not done:
             stream = browser.get(url, stream=True, headers=headers)
             if not self.is_downloadable(stream):
-                warning = ("Warning: download url for file %s resolves to an html document rather than a downloadable file. \n"
-                            "See the downloaded file for details. Is it possible you have not accepted the competition's rules on the kaggle website?") % local_filename
-                self.app.stdout.write(warning+"\n")
+                warning = (
+                    'Warning:'
+                    'download url for file {} resolves to an html document'
+                    'rather than a downloadable file. \n'
+                    'See the downloaded file for details.'
+                    'Is it possible you have not'
+                    'accepted the competition\'s rules on the kaggle website?'
+                    .format(local_filename)
+                )
+                self.app.stdout.write('{}\n'.format(warning))
             with open(local_filename, 'ab') as f:
-                for chunk in stream.iter_content(chunk_size=1024, decode_unicode=True):
-                    if chunk: # filter out keep-alive new chunks
+                for chunk in stream.iter_content(
+                    chunk_size=1024, decode_unicode=True
+                ):
+                    if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
                         self.bytes += len(chunk)
                         bar.update(self.bytes)
             bar.finish()
 
     def is_downloadable(self, response):
-        """
-        Checks whether the response object is a html page or a likely downloadable file.
-        Intended to detect error pages or prompts such as kaggle's competition rules acceptance prompt.
+        '''
+        Checks whether the response object is a html page
+        or a likely downloadable file.
+        Intended to detect error pages or prompts
+        such as kaggle's competition rules acceptance prompt.
 
         Returns True if the response is a html page. False otherwise.
-        """
-        content_type = response.headers.get('Content-Type', "")
-        content_disp = response.headers.get('Content-Disposition', "")
-        if "text/html" in content_type and not "attachment" in content_disp:
-            # This response is a html file which is not marked as an attachment,
+        '''
+
+        content_type = response.headers.get('Content-Type', '')
+        content_disp = response.headers.get('Content-Disposition', '')
+
+        if 'text/html' in content_type and 'attachment' not in content_disp:
+            # This response is a html file
+            # which is not marked as an attachment,
             # so we likely hit a rules acceptance prompt
             return False
         return True
+
 
 class Dataset(Download):
     'Download dataset from a specific user.'
@@ -135,7 +151,9 @@ class Dataset(Download):
         data_page = browser.get(data_url)
 
         data = str(data_page.soup)
-        links = re.findall('"url":"(/'+owner+'/'+dataset+'/downloads/[^"]+)"', data)
+        links = re.findall(
+            '"url":"(/{}/{}/downloads/[^"]+)"'.format(owner, dataset), data
+        )
 
         for link in links:
             url = base + link
