@@ -6,6 +6,8 @@ from cliff.command import Command
 from . import common
 from .config import get_final_config
 
+import progressbar
+from contextlib import closing
 
 class Download(Command):
     'Download data files from a specific competition.'
@@ -47,16 +49,37 @@ class Download(Command):
         local_filename = url.split('/')[-1]
         headers = {}
         done = False
+        file_size = 0
+        total_size = 0
+
+        bar = progressbar.ProgressBar()
+        content_length = int(
+            browser.request('head', url).headers.get('Content-Length')
+        )
 
         if os.path.isfile(local_filename):
             file_size = os.path.getsize(local_filename)
-            content_length = int(
-                browser.request('head', url).headers.get('Content-Length')
-            )
             if file_size < content_length:
                 headers['Range'] = 'bytes={}-'.format(file_size)
             else:
                 done = True
+
+        self.bytes = file_size
+        widgets = [local_filename, ' ', progressbar.Percentage(), ' ',
+                   progressbar.Bar(marker="#"), ' ',
+                   progressbar.ETA(), ' ', progressbar.FileTransferSpeed()]
+
+        if file_size == content_length:
+            print('{} already downloaded !'.format(local_filename))
+            return local_filename
+        elif file_size > content_length:
+            print("Something wrong here, Incorrect file !")
+            return
+        else:
+            bar = progressbar.ProgressBar(widgets=widgets,
+                                          maxval=content_length).start()
+            if not self.bytes:
+                bar.update(self.bytes)
 
         if not done:
             stream = browser.get(url, stream=True, headers=headers)
@@ -68,6 +91,9 @@ class Download(Command):
                 for chunk in stream.iter_content(chunk_size=1024, decode_unicode=True):
                     if chunk: # filter out keep-alive new chunks
                         f.write(chunk)
+                        self.bytes += len(chunk)
+                        bar.update(self.bytes)
+            bar.finish()
 
     def is_downloadable(self, response):
         """

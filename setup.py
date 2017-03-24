@@ -39,7 +39,14 @@ setup(
     scripts=[],
 
     provides=[],
-    install_requires=['cliff', 'MechanicalSoup', 'lxml', 'cssselect', 'configparser'],
+    install_requires=[
+        'cliff',
+        'MechanicalSoup',
+        'lxml',
+        'cssselect',
+        'configparser',
+        'progressbar'
+    ],
 
     namespace_packages=[],
     packages=find_packages(),
