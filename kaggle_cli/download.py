@@ -51,7 +51,6 @@ class Download(Command):
         headers = {}
         done = False
         file_size = 0
-        total_size = 0
 
         bar = progressbar.ProgressBar()
         content_length = int(
@@ -65,7 +64,7 @@ class Download(Command):
             else:
                 done = True
 
-        self.bytes = file_size
+        finished_bytes = file_size
         widgets = [local_filename, ' ', progressbar.Percentage(), ' ',
                    progressbar.Bar(marker='#'), ' ',
                    progressbar.ETA(), ' ', progressbar.FileTransferSpeed()]
@@ -74,13 +73,12 @@ class Download(Command):
             print('{} already downloaded !'.format(local_filename))
             return local_filename
         elif file_size > content_length:
-            print("Something wrong here, Incorrect file !")
+            print('Something wrong here, Incorrect file !')
             return
         else:
             bar = progressbar.ProgressBar(widgets=widgets,
                                           maxval=content_length).start()
-            if not self.bytes:
-                bar.update(self.bytes)
+            bar.update(finished_bytes)
 
         if not done:
             stream = browser.get(url, stream=True, headers=headers)
@@ -101,8 +99,8 @@ class Download(Command):
                 ):
                     if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
-                        self.bytes += len(chunk)
-                        bar.update(self.bytes)
+                        finished_bytes += len(chunk)
+                        bar.update(finished_bytes)
             bar.finish()
 
     def is_downloadable(self, response):
