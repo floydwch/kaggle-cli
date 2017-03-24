@@ -8,7 +8,7 @@ PROJECT = 'kaggle-cli'
 
 
 long_description = \
-    'https://github.com/floydsoft/kaggle-cli/blob/master/README.md'
+    'https://github.com/floydwch/kaggle-cli/blob/master/README.md'
 
 setup(
     name=PROJECT,
@@ -17,11 +17,11 @@ setup(
     description='An unofficial Kaggle command line tool.',
     long_description=long_description,
 
-    author='floydsoft',
-    author_email='floydsoft@gmail.com',
+    author='floydwch',
+    author_email='floydwch@gmail.com',
 
-    url='https://github.com/floydsoft/kaggle-cli',
-    download_url='https://github.com/floydsoft/kaggle-cli/tarball/master',
+    url='https://github.com/floydwch/kaggle-cli',
+    download_url='https://github.com/floydwch/kaggle-cli/tarball/master',
 
     classifiers=['Development Status :: 3 - Alpha',
                  'License :: OSI Approved :: MIT License',
