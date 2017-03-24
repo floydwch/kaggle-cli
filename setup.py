@@ -45,7 +45,7 @@ setup(
         'lxml',
         'cssselect',
         'configparser',
-        'progressbar'
+        'progressbar2'
     ],
 
     namespace_packages=[],
