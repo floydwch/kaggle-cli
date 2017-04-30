@@ -23,7 +23,8 @@ def get_config(config_path):
 
 
 def get_config_candidates(curdir):
-    while curdir != '/':
+    prevdir = ''
+    while curdir != prevdir:
         if curdir != os.path.expanduser('~'):
             config_path = os.path.join(
                 curdir, CONFIG_DIR_NAME, CONFIG_FILE_NAME
@@ -31,6 +32,7 @@ def get_config_candidates(curdir):
             config = get_config(config_path)
             if config:
                 yield config
+        prevdir = curdir
         curdir = os.path.dirname(curdir)  # derive parent dir
 
     config_path = os.path.join(
