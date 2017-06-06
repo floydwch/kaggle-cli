@@ -63,11 +63,10 @@ def get_inline_config(parsed_args):
     )
 
 
-def get_final_config(parsed_args):
-    return merge_dicts(
-        get_working_config(get_config_candidates(os.getcwd())),
-        get_inline_config(parsed_args)
-    )
+def get_final_config(parsed_args=None):
+    result = get_working_config(get_config_candidates(os.getcwd()))
+    if parsed_args is not None: result.update(get_inline_config(parsed_args))
+    return result
 
 
 class Config(Command):

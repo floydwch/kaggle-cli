@@ -60,7 +60,8 @@ setup(
             'submit = kaggle_cli.submit:Submit',
             'config = kaggle_cli.config:Config',
             'download = kaggle_cli.download:Download',
-            'dataset = kaggle_cli.download:Dataset'
+            'dataset = kaggle_cli.download:Dataset',
+            'submissions = kaggle_cli.submissions:Submissions',
         ],
     },
 
