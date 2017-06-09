@@ -30,6 +30,13 @@ To download a specific data file.
 $ kg download -u `username` -p `password` -c `competition` -f `train.zip`
 ```
 
+### Submissions
+To list submissions.
+
+```
+$ kg submissions
+```
+
 ### Dataset
 
 To download a dataset (resumable).
