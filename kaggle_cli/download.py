@@ -40,6 +40,15 @@ class Download(Command):
             '"url":"(/c/{}/download/[^"]+)"'.format(competition), data
         )
 
+        if not links:  # fallback for inclass competition
+            links = map(
+                lambda link: link.get('href'),
+                data_page.soup.find(id='data-files').find_all('a')
+            )
+
+        if not links:
+            print('not found')
+
         for link in links:
             url = base + link
             if file_name is None or url.endswith('/' + file_name):
