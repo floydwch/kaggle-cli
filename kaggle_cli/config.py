@@ -61,7 +61,8 @@ def get_working_config(configs):
 def get_inline_config(parsed_args):
     parsed_arg_dict = vars(parsed_args)
     return dict(
-        (k, parsed_arg_dict[k]) for k in DATA_OPTIONS if parsed_arg_dict[k]
+        (k, parsed_arg_dict[k])
+        for k in parsed_arg_dict if parsed_arg_dict[k]
     )
 
 
