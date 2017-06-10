@@ -1,9 +1,25 @@
 import sys
+import os
+import pickle
 
 from mechanicalsoup import Browser
 
+from .config import CONFIG_DIR_NAME
+
 
 def login(username, password):
+    pickle_path = os.path.join(
+        os.path.expanduser('~'),
+        CONFIG_DIR_NAME,
+        'browser.pickle'
+    )
+    if os.path.isfile(pickle_path):
+        with open(pickle_path, 'rb') as file:
+            data = pickle.load(file)
+            if data['username'] == username and \
+                    data['password'] == password:
+                return data['browser']
+
     login_url = 'https://www.kaggle.com/account/login'
     browser = Browser()
 
@@ -17,5 +33,10 @@ def login(username, password):
                 .select('#standalone-signin .validation-summary-errors')[0].get_text())
         print('There was an error logging in: ' + error)
         sys.exit(1)
+
+    with open(pickle_path, 'wb') as f:
+        pickle.dump(dict(
+            username=username, password=password, browser=browser
+        ), f)
 
     return browser
