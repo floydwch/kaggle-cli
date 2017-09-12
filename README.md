@@ -64,6 +64,9 @@ Show working config:
 $ kg config
 ```
 
+### Use Proxy
+`$ export HTTPS_PROXY="YOUR_PROXY_URI"`, for example: `$ export HTTPS_PROXY="http://10.10.1.10:1080"`. For Windows user, please set environment variable HTTPS_PROXY accordingly.
+
 ## Example
 ```
 $ kg submit sampleSubmission.csv -c titanic-gettingStarted -u USERNAME -p PASSWORD -m "Enter a brief description of this submission here."
