@@ -7,27 +7,27 @@ $ pip install kaggle-cli
 ```
 
 ## Usage
-Please note that accepting the competition rules before your commands.
+Please note that you must accept the competition rules before running your commands.
 
 
 ### Submit
 To submit an entry.
 
 ```
-$ kg submit `entry` -u `username` -p `password` -c `competition` -m `message`
+$ kg submit <submission-file> -u <username> -p <password> -c <competition> -m "<message>"
 ```
 
 ### Download
 To download the data files (resumable).
 
 ```
-$ kg download -u `username` -p `password` -c `competition`
+$ kg download -u <username> -p <password> -c <competition>
 ```
 
 To download a specific data file.
 
 ```
-$ kg download -u `username` -p `password` -c `competition` -f `train.zip`
+$ kg download -u <username> -p <password> -c <competition> -f train.zip
 ```
 
 ### Submissions
@@ -42,20 +42,20 @@ $ kg submissions
 To download a dataset (resumable).
 
 ```
-$ kg download -u `username` -p `password` -o `owner` -d `dataset`
+$ kg dataset -u <username> -p <password> -o <owner> -d <dataset>
 ```
 
 ### Config
 To set global config.
 
 ```
-$ kg config -g -u `username` -p `password` -c `competition`
+$ kg config -g -u <username> -p <password> -c <competition>
 ```
 
 or local config:
 
 ```
-$ kg config -u `username` -p `password` -c `competition`
+$ kg config -u <username> -p <password> -c <competition>
 ```
 
 Show working config:
