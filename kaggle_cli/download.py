@@ -56,7 +56,8 @@ class Download(Command):
         for link in links:
             url = base + link
             if file_name is None or url.endswith('/' + file_name):
-                self.download_file(browser, url)
+                if self.download_file(browser, url) is False:
+                    return
 
     def download_file(self, browser, url):
         print('downloading {}\n'.format(url))
@@ -95,24 +96,25 @@ class Download(Command):
 
         if not done:
             stream = browser.get(url, stream=True, headers=headers)
+            bar.finish()
             if not self.is_downloadable(stream):
                 warning = (
-                    'Warning:'
-                    'download url for file {} resolves to an html document'
+                    'Warning: '
+                    'download url for file {} resolves to an html document '
                     'rather than a downloadable file. \n'
-                    'See the downloaded file for details.'
-                    'Is it possible you have not'
+                    'Is it possible you have not '
                     'accepted the competition\'s rules on the kaggle website?'
                     .format(local_filename)
                 )
                 print('{}\n'.format(warning))
+                return False
             with open(local_filename, 'ab') as f:
                 for chunk in stream.iter_content(chunk_size=1024):
                     if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
                         finished_bytes += len(chunk)
                         bar.update(finished_bytes)
-            bar.finish()
+        return True
 
     def is_downloadable(self, response):
         '''
@@ -171,4 +173,5 @@ class Dataset(Download):
         for link in links:
             url = base + link
             if file_name is None or url.endswith('/' + file_name):
-                self.download_file(browser, url)
+                if self.download_file(browser, url) is False:
+                    return
