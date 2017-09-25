@@ -7,7 +7,7 @@ $ pip install kaggle-cli
 ```
 
 ## Usage
-Please note that you must accept the competition rules before running your commands.
+Please note that you **must accept the competition rules** on the competition's page before running your commands.
 
 
 ### Submit
