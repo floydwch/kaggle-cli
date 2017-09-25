@@ -34,6 +34,11 @@ class Submit(Command):
         message = parsed_args.message
 
         submit_page = browser.get(submit_url)
+
+        if submit_page.status_code == 404:
+            print('competition not found')
+            return
+
         submit_form = submit_page.soup.find(id='submission-form')
         submit_form.find('input', {'name': 'SubmissionUpload'})['value'] = entry
 
