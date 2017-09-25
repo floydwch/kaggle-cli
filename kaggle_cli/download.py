@@ -35,6 +35,10 @@ class Download(Command):
 
         data_page = browser.get(data_url)
 
+        if data_page.status_code == 404:
+            print('competition not found')
+            return
+
         data = str(data_page.soup)
         links = re.findall(
             '"url":"(/c/{}/download/[^"]+)"'.format(competition), data
@@ -154,6 +158,10 @@ class Dataset(Download):
         data_url = '/'.join([base, owner, dataset])
 
         data_page = browser.get(data_url)
+
+        if data_page.status_code == 404:
+            print('dataset not found')
+            return
 
         data = str(data_page.soup)
         links = re.findall(
