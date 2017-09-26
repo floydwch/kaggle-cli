@@ -1,3 +1,5 @@
+import time
+
 from cliff.command import Command
 
 from . import common
@@ -39,24 +41,40 @@ class Submit(Command):
             print('competition not found')
             return
 
+        team_id = submit_page.soup.select(
+            '.comp-content-inside h4 strong a'
+        )[0].attrs['href'].split('/')[2]
+
         submit_form = submit_page.soup.find(id='submission-form')
-        submit_form.find('input', {'name': 'SubmissionUpload'})['value'] = entry
+        submit_form.find(
+            'input', {
+                'name': 'SubmissionUpload'
+            }
+        )['value'] = entry
 
         if message:
-            submit_form.find('textarea', {'name': 'SubmissionDescription'}).insert(0, message)
-        submit_result = browser.submit(submit_form, submit_page.url)
-        leaderboard_url = '/'.join([base, 'c', competition, 'leaderboard'])
-        assert submit_result.url == leaderboard_url
+            submit_form.find(
+                'textarea', {
+                    'name': 'SubmissionDescription'
+                }
+            ).insert(0, message)
 
-        # while True:
-        #     leaderboard = html.fromstring(browser.response().read())
-        #     score = leaderboard.cssselect('.submission-result strong')
+        browser.submit(submit_form, submit_page.url)
 
-        #     if len(score) and score[0].text_content():
-        #         score = score[0].text_content()
-        #         break
+        status_url = (
+            'https://www.kaggle.com/'
+            'c/{}/submissions/status.json'
+            '?apiVersion=1&teamId={}'.format(competition, team_id)
+        )
 
-        #     sleep(30)
-        #     browser.reload()
-
-        # self.app.stdout.write(score + '\n')
+        while True:
+            status = browser.get(status_url).json()
+            if status['submissionStatus'] == 'pending':
+                time.sleep(1)
+                continue
+            elif status['submissionStatus'] == 'complete':
+                print(status['publicScoreFormatted'])
+                break
+            else:
+                print('something went wrong')
+                break
