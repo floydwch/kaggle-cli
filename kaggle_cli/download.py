@@ -96,7 +96,7 @@ class Download(Command):
 
         if not done:
             stream = browser.get(url, stream=True, headers=headers)
-            bar.finish()
+
             if not self.is_downloadable(stream):
                 warning = (
                     'Warning: '
@@ -106,14 +106,19 @@ class Download(Command):
                     'accepted the competition\'s rules on the kaggle website?'
                     .format(local_filename)
                 )
-                print('{}\n'.format(warning))
+                print('\n\n{}\n'.format(warning))
                 return False
+
             with open(local_filename, 'ab') as f:
                 for chunk in stream.iter_content(chunk_size=1024):
                     if chunk:  # filter out keep-alive new chunks
                         f.write(chunk)
                         finished_bytes += len(chunk)
                         bar.update(finished_bytes)
+
+            bar.finish()
+            print('')
+
         return True
 
     def is_downloadable(self, response):
