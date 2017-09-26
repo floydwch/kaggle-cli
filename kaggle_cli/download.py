@@ -24,9 +24,9 @@ class Download(Command):
     def take_action(self, parsed_args):
         config = get_final_config(parsed_args)
 
-        username = config['username']
-        password = config['password']
-        competition = config['competition']
+        username = config.get('username', '')
+        password = config.get('password', '')
+        competition = config.get('competition', '')
         file_name = parsed_args.filename
 
         browser = common.login(username, password)
@@ -154,8 +154,8 @@ class Dataset(Download):
     def take_action(self, parsed_args):
         config = get_final_config(parsed_args)
 
-        username = config['username']
-        password = config['password']
+        username = config.get('username', '')
+        password = config.get('password', '')
         dataset = parsed_args.dataset
         owner = parsed_args.owner
         file_name = parsed_args.filename
