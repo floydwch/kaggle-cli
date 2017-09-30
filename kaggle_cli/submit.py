@@ -1,4 +1,5 @@
 import time
+import re
 
 from cliff.command import Command
 
@@ -30,20 +31,23 @@ class Submit(Command):
 
         browser = common.login(username, password)
         base = 'https://www.kaggle.com'
-        submit_url = '/'.join([base, 'c', competition, 'submissions', 'attach'])
+        competition_url = '/'.join([base, 'c', competition])
+        submit_url = '/'.join([competition_url, 'submissions', 'attach'])
 
         entry = parsed_args.entry
         message = parsed_args.message
 
+        competition_page = browser.get(competition_url)
         submit_page = browser.get(submit_url)
 
         if submit_page.status_code == 404:
             print('competition not found')
             return
 
-        team_id = submit_page.soup.select(
-            '.comp-content-inside h4 strong a'
-        )[0].attrs['href'].split('/')[2]
+        team_id = re.search(
+            '"team":{"id":(?P<id>\d+)',
+            str(competition_page.soup)
+        ).group(1)
 
         submit_form = submit_page.soup.find(id='submission-form')
         submit_form.find(
