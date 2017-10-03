@@ -43,6 +43,6 @@ def login(username, password):
     with open(pickle_path, 'wb') as f:
         pickle.dump(dict(
             username=username, password=password, browser=browser
-        ), f)
+        ), f, 2)
 
     return browser
