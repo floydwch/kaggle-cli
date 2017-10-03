@@ -17,11 +17,14 @@ def login(username, password):
         'browser.pickle'
     )
     if os.path.isfile(pickle_path):
-        with open(pickle_path, 'rb') as file:
-            data = pickle.load(file)
-            if data['username'] == username and \
-                    data['password'] == password:
-                return data['browser']
+        try:
+            with open(pickle_path, 'rb') as file:
+                data = pickle.load(file)
+                if data['username'] == username and \
+                        data['password'] == password:
+                    return data['browser']
+        except:
+            pass
 
     login_url = 'https://www.kaggle.com/account/login'
     browser = Browser()
@@ -43,6 +46,6 @@ def login(username, password):
     with open(pickle_path, 'wb') as f:
         pickle.dump(dict(
             username=username, password=password, browser=browser
-        ), f, 2)
+        ), f)
 
     return browser

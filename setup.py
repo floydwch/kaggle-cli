@@ -41,7 +41,7 @@ setup(
     provides=[],
     install_requires=[
         'cliff>=2.9.0,<2.10',
-        'MechanicalSoup>=0.8,<0.9',
+        'MechanicalSoup>=0.7.0,<0.9',
         'lxml>=4.0.0,<4.1',
         'cssselect>=1.0.1,<1.1',
         'configparser',
