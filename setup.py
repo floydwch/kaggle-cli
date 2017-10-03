@@ -40,12 +40,12 @@ setup(
 
     provides=[],
     install_requires=[
-        'cliff',
-        'MechanicalSoup',
-        'lxml',
-        'cssselect',
+        'cliff>=2.9.0,<2.10',
+        'MechanicalSoup>=0.8,<0.9',
+        'lxml>=4.0.0,<4.1',
+        'cssselect>=1.0.1,<1.1',
         'configparser',
-        'progressbar2'
+        'progressbar2>=3.34.3,<3.35'
     ],
 
     namespace_packages=[],
