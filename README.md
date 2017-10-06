@@ -6,6 +6,11 @@ An unofficial Kaggle command line tool.
 $ pip install kaggle-cli
 ```
 
+## Upgrade
+```
+$ pip install -U kaggle-cli
+```
+
 ## Usage
 Please note that you **must accept the competition rules** on the competition's page before running your commands.
 
