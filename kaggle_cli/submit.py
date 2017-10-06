@@ -88,9 +88,9 @@ class Submit(Command):
         )
 
         while True:
+            time.sleep(1)
             status = browser.get(status_url).json()
             if status['submissionStatus'] == 'pending':
-                time.sleep(1)
                 continue
             elif status['submissionStatus'] == 'complete':
                 print(status['publicScoreFormatted'])
