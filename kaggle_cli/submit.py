@@ -1,5 +1,7 @@
+import os
 import time
 import re
+import json
 
 from cliff.command import Command
 
@@ -32,15 +34,15 @@ class Submit(Command):
         browser = common.login(username, password)
         base = 'https://www.kaggle.com'
         competition_url = '/'.join([base, 'c', competition])
-        submit_url = '/'.join([competition_url, 'submissions', 'attach'])
+        file_form_submit_url = '/'.join([base, 'blobs/inbox/submissions'])
+        entry_form_submit_url = '/'.join([competition_url, 'submission.json'])
 
         entry = parsed_args.entry
         message = parsed_args.message
 
         competition_page = browser.get(competition_url)
-        submit_page = browser.get(submit_url)
 
-        if submit_page.status_code == 404:
+        if competition_page.status_code == 404:
             print('competition not found')
             return
 
@@ -49,21 +51,35 @@ class Submit(Command):
             str(competition_page.soup)
         ).group(1)
 
-        submit_form = submit_page.soup.find(id='submission-form')
-        submit_form.find(
-            'input', {
-                'name': 'SubmissionUpload'
+        form_submission = browser.post(
+            file_form_submit_url,
+            data={
+                'fileName': entry,
+                'contentLength': os.path.getsize(entry),
+                'lastModifiedDateUtc': int(os.path.getmtime(entry) * 1000)
             }
-        )['value'] = entry
+        ).json()
 
-        if message:
-            submit_form.find(
-                'textarea', {
-                    'name': 'SubmissionDescription'
+        file_submit_url = base + form_submission['createUrl']
+
+        with open(entry, 'rb') as submission_file:
+            token = browser.post(
+                file_submit_url,
+                files={
+                    'file': submission_file
                 }
-            ).insert(0, message)
+            ).json()['token']
 
-        browser.submit(submit_form, submit_page.url)
+        browser.post(
+            entry_form_submit_url,
+            data=json.dumps({
+                'blobFileTokens': [token],
+                'submissionDescription': message if message else ''
+            }),
+            headers={
+                'Content-Type': 'application/json'
+            }
+        )
 
         status_url = (
             'https://www.kaggle.com/'
