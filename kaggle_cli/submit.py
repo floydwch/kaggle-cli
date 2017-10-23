@@ -70,7 +70,7 @@ class Submit(Command):
                 }
             ).json()['token']
 
-        entry_form_resp = browser.post(
+        entry_form_resp_message = browser.post(
             entry_form_url,
             data=json.dumps({
                 'blobFileTokens': [token],
@@ -79,10 +79,10 @@ class Submit(Command):
             headers={
                 'Content-Type': 'application/json'
             }
-        )
+        ).json()['pageMessages'][0]
 
-        if entry_form_resp.status_code == 400:
-            print('You have no more submissions remaining for today.')
+        if entry_form_resp_message['type'] == 'error':
+            print(entry_form_resp_message['dangerousHtmlMessage'])
             return
 
         status_url = (
