@@ -34,8 +34,8 @@ class Submit(Command):
         browser = common.login(username, password)
         base = 'https://www.kaggle.com'
         competition_url = '/'.join([base, 'c', competition])
-        file_form_submit_url = '/'.join([base, 'blobs/inbox/submissions'])
-        entry_form_submit_url = '/'.join([competition_url, 'submission.json'])
+        file_form_url = '/'.join([base, 'blobs/inbox/submissions'])
+        entry_form_url = '/'.join([competition_url, 'submission.json'])
 
         entry = parsed_args.entry
         message = parsed_args.message
@@ -52,7 +52,7 @@ class Submit(Command):
         ).group(1)
 
         form_submission = browser.post(
-            file_form_submit_url,
+            file_form_url,
             data={
                 'fileName': entry,
                 'contentLength': os.path.getsize(entry),
@@ -70,8 +70,8 @@ class Submit(Command):
                 }
             ).json()['token']
 
-        browser.post(
-            entry_form_submit_url,
+        entry_form_resp = browser.post(
+            entry_form_url,
             data=json.dumps({
                 'blobFileTokens': [token],
                 'submissionDescription': message if message else ''
@@ -80,6 +80,10 @@ class Submit(Command):
                 'Content-Type': 'application/json'
             }
         )
+
+        if entry_form_resp.status_code == 400:
+            print('You have no more submissions remaining for today.')
+            return
 
         status_url = (
             'https://www.kaggle.com/'
