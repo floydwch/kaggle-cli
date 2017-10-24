@@ -17,6 +17,9 @@ FIELD_OPTIONS = {
     },
     'competition': {
         'type': str
+    },
+    'zip': {
+        'type': bool
     }
 }
 
