@@ -59,11 +59,30 @@ def merge_dicts(x, y={}):
     return z
 
 
+def config_section_to_dict(config, section, field_options):
+    result_dict = {}
+    for name, spec in field_options.items():
+        if spec['type'] == bool:
+            value = config.getboolean(section, name, fallback=None)
+        elif spec['type'] == int:
+            value = config.getint(section, name, fallback=None)
+        elif spec['type'] == float:
+            value = config.getfloat(section, name, fallback=None)
+        else:
+            value = config.get(section, name, fallback=None)
+        if value:
+            result_dict[name] = value
+    return result_dict
+
+
 def get_working_config(configs):
     return reduce(
         lambda working_config, config:
             merge_dicts(config, working_config),
-        map(lambda config: dict(config['user']), configs),
+        map(
+            lambda config:
+                config_section_to_dict(config, 'user', FIELD_OPTIONS),
+            configs),
         {}
     )
 
