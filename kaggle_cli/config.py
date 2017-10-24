@@ -8,7 +8,17 @@ from cliff.command import Command
 
 CONFIG_DIR_NAME = '.kaggle-cli'
 CONFIG_FILE_NAME = 'config'
-DATA_OPTIONS = set(['username', 'password', 'competition'])
+FIELD_OPTIONS = {
+    'username': {
+        'type': str
+    },
+    'password': {
+        'type': str
+    },
+    'competition': {
+        'type': str
+    }
+}
 
 
 def get_config(config_path):
@@ -97,7 +107,7 @@ class Config(Command):
     def take_action(self, parsed_args):
         parsed_arg_dict = vars(parsed_args)
 
-        if DATA_OPTIONS & set(
+        if set(FIELD_OPTIONS.keys()) & set(
             filter(lambda x: parsed_arg_dict[x], parsed_arg_dict)
         ):
             if parsed_arg_dict['global']:
