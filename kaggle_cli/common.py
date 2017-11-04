@@ -1,6 +1,7 @@
 import sys
 import os
 import pickle
+import re
 
 from mechanicalsoup import Browser
 
@@ -16,6 +17,7 @@ def login(username, password):
         config_dir_path,
         'browser.pickle'
     )
+
     if os.path.isfile(pickle_path):
         try:
             with open(pickle_path, 'rb') as file:
@@ -26,19 +28,33 @@ def login(username, password):
         except:
             pass
 
-    login_url = 'https://www.kaggle.com/account/login'
     browser = Browser()
+    login_url = 'https://www.kaggle.com/account/login'
 
     login_page = browser.get(login_url)
-    login_form = login_page.soup.select("#login-account")[0]
-    login_form.select("#UserName")[0]['value'] = username
-    login_form.select("#Password")[0]['value'] = password
-    login_result = browser.submit(login_form, login_page.url)
-    if login_result.url == login_url:
-        error = (login_result.soup
-                .select('#standalone-signin .validation-summary-errors')[0].get_text())
-        print('There was an error logging in: ' + error)
-        sys.exit(1)
+
+    token = re.search(
+        'antiForgeryToken: \'(?P<token>.+)\'',
+        str(login_page.soup)
+    ).group(1)
+
+    login_result_page = browser.post(
+        login_url,
+        data={
+            'username': username,
+            'password': password,
+            '__RequestVerificationToken': token
+        }
+    )
+
+    error_match = re.search(
+        '"errors":\["(?P<error>.+)"\]',
+        str(login_result_page.soup)
+    )
+
+    if error_match:
+        print(error_match.group(1))
+        return
 
     if not os.path.isdir(config_dir_path):
         os.mkdir(config_dir_path, 0o700)
