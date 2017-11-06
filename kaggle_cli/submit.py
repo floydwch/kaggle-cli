@@ -79,9 +79,10 @@ class Submit(Command):
             headers={
                 'Content-Type': 'application/json'
             }
-        ).json()['pageMessages'][0]
+        ).json()
 
-        if entry_form_resp_message['type'] == 'error':
+        if entry_form_resp_message['pageMessages'] and \
+            entry_form_resp_message['pageMessages']['type'] == 'error':
             print(entry_form_resp_message['dangerousHtmlMessage'])
             return
 
