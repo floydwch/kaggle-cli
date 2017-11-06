@@ -46,7 +46,7 @@ setup(
         'cssselect>=1.0.1,<1.1',
         'configparser',
         'progressbar2>=3.34.3,<3.35',
-        'beautifulsoup4>=4.6.0'
+        'beautifulsoup4>=4.6.0,<4.7'
     ],
 
     namespace_packages=[],
