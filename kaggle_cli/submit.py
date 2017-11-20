@@ -27,8 +27,8 @@ class Submit(Command):
     def take_action(self, parsed_args):
         config = get_final_config(parsed_args)
 
-        username = config.get('username', '')
-        password = config.get('password', '')
+        username = config.get('username', None)
+        password = config.get('password', None)
         competition = config.get('competition', '')
 
         browser = common.login(username, password)

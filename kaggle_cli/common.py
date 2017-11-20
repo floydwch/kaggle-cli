@@ -2,13 +2,19 @@ import sys
 import os
 import pickle
 import re
+import getpass
 
 from mechanicalsoup import Browser
 
 from .config import CONFIG_DIR_NAME
 
 
-def login(username, password):
+def login(username=None, password=None):
+    if username is None:
+        username = input('Please provide username: ')
+    if password is None:
+        password = getpass.getpass('Please provide password: ')
+
     config_dir_path = os.path.join(
         os.path.expanduser('~'),
         CONFIG_DIR_NAME

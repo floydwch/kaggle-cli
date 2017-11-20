@@ -52,7 +52,9 @@ class Submissions(Command):
         return parser
 
     def fetch_submissions(self, config):
-        browser = common.login(config['username'], config['password'])
+        username = config.get('username', None)
+        password = config.get('password', None)
+        browser = common.login(username, password)
         base = 'https://www.kaggle.com'
         url = '/'.join([base, 'c', config['competition'], 'submissions.json'])
         return browser.get(
